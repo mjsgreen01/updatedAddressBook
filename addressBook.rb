@@ -7,7 +7,7 @@ require_relative 'lib/models'
 
 
 
-# define the create address entry methds
+# define the create address entry methods
 def createEntry
 
 	def addPhone(entry)
@@ -87,20 +87,22 @@ def searchEntries
 	
 	matches = AddressEntry.where(last_name: searchString)
 
-	puts "Found #{matches.length} matches"
+	puts "Found #{matches.length} matches\n\n"
 
-	matches.each do |item|
+	matches.each_with_index do |item, index|
 
+		puts "match number #{index+1}:"
 		puts "first name: #{item.first_name}"
 		puts "last name: #{item.last_name}"
 		puts "Phone numbers:"
 		item.phone_numbers.each do |number|
-			puts number.digits
+			puts "[#{number.id}] :  #{number.digits}"
 		end
 		puts "Email addresses:"
 		item.emails.each do |email|
 			puts email.address
 		end
+		puts "---------------------------------"
 	end
 end
 
@@ -128,7 +130,8 @@ def mainMenu
 		searchEntries()
 	elsif mainChoice == quitApplication
 		puts "Don't worry, your #{AddressEntry.all.length} entries are safely stored in the database"
-		abort("Peace out")
+		puts("Peace out")
+		exit
 	else
 		puts "What's wrong with you, don't you know how to read!?!?"
 		mainMenu()
