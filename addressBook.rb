@@ -10,6 +10,12 @@ require_relative 'lib/models'
 # define the create address entry methods
 def createEntry
 
+  ### Warning: Nested methods in Ruby actually
+  ###          affect the scope *outside* of the
+  ###          outer method.  In most cases,
+  ###          you should just move the inner
+  ###          methods out of the outer method.
+  ###
 	def addPhone(entry)
 		puts "Phone number category:"
 		phoneCat = gets.chomp
@@ -47,6 +53,15 @@ def createEntry
 	puts "Add a phone number? (y/n)"
 	yesno = gets.chomp
 	#I'm sure there's a better way to do this...
+  ### Thought: 2 potential simplifications:
+  ###
+  ###   1. Don't use a special prompt for the
+  ###      first phone number.
+  ###
+  ###   2. Create a #prompt_yn(...) method that
+  ###      prints the specified prompt and waits
+  ###      for user input.
+  ###
 	if yesno == "y"
 		addPhone(entry)
 		while yesno == "y"
@@ -73,6 +88,9 @@ def createEntry
 	end
 	
 
+  ### TODO: Add some error handling here.  It's
+  ###       not safe to assume that the save will
+  ###       always work.
 	entry.save
 	puts "address entry has been saved!"
 
@@ -85,6 +103,11 @@ def searchEntries
 	puts "search for person with this last name:"
 	searchString = gets.chomp
 	
+  ### Pro-tip: you can do partial string matches
+  ###          by using a 'LIKE' clause.  Ex:
+  ###
+  ###            AddressEntry.where('last_name LIKE ?', "%#{searchString}%")
+  ###
 	matches = AddressEntry.where(last_name: searchString)
 
 	puts "Found #{matches.length} matches\n\n"
@@ -131,12 +154,22 @@ def mainMenu
 	elsif mainChoice == quitApplication
 		puts "Don't worry, your #{AddressEntry.all.length} entries are safely stored in the database"
 		puts("Peace out")
+
+    ### Question: Will this call to #exit still
+    ###           be necessarily if you refactor
+    ###           the main menu to loop instead
+    ###           of using recursion?
 		exit
 	else
 		puts "What's wrong with you, don't you know how to read!?!?"
+
+    ### Note: This call to mainMenu is unnecessary.
 		mainMenu()
 	end
 
+  ### Question: How can you make the main menu
+  ###           repeat without calling this
+  ###           method recursively?
 	mainMenu()
 end
 
